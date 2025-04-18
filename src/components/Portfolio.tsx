@@ -23,6 +23,39 @@ const Portfolio: React.FC = () => {
   const [dinoPosition, setDinoPosition] = useState(0);
   const { setTheme, theme } = useTheme();
 
+  // Jump handler with continuous forward motion
+  const handleJump = useCallback(() => {
+    if (!isJumping) {
+      setIsJumping(true);
+      
+      // Forward momentum during jump - simulate continuous right movement
+      const jumpDuration = 500; // ms
+      const startTime = Date.now();
+      const startPosition = dinoPosition;
+      const jumpDistance = 3; // How far to move during jump
+      
+      const moveInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / jumpDuration, 1);
+        
+        // Add forward momentum during jump
+        setDinoPosition(prev => {
+          const nextPos = Math.min(startPosition + (progress * jumpDistance), 100);
+          return nextPos;
+        });
+        
+        if (progress >= 1) {
+          clearInterval(moveInterval);
+        }
+      }, 16);
+      
+      setTimeout(() => {
+        setIsJumping(false);
+        clearInterval(moveInterval);
+      }, jumpDuration);
+    }
+  }, [isJumping, dinoPosition]);
+
   // Update scroll position based on dino position
   useEffect(() => {
     if (containerRef.current && !gameOver) {
@@ -101,15 +134,6 @@ const Portfolio: React.FC = () => {
       setDinoPosition((sectionIndex / totalSections) * 100);
     }
   };
-
-  const handleJump = useCallback(() => {
-    if (!isJumping) {
-      setIsJumping(true);
-      setTimeout(() => {
-        setIsJumping(false);
-      }, 500);
-    }
-  }, [isJumping]);
   
   const resetGame = () => {
     setGameOver(false);
@@ -120,7 +144,7 @@ const Portfolio: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col">
+    <div className="h-screen w-full flex flex-col font-jetbrains-mono">
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
         <span className="text-sm">🌞</span>
         <Switch 
@@ -174,7 +198,7 @@ const Portfolio: React.FC = () => {
       />
       
       <button 
-        className="fixed bottom-4 right-4 z-40 p-2 bg-black text-white opacity-50 hover:opacity-100 transition-opacity rounded-full"
+        className="fixed bottom-4 right-4 z-40 p-2 bg-black text-white dark:bg-white dark:text-black opacity-50 hover:opacity-100 transition-opacity rounded-full"
         onClick={() => setShowInstructions(true)}
       >
         ?

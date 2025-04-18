@@ -28,6 +28,7 @@ const GameWorld: React.FC<GameWorldProps> = ({
 }) => {
   const [score, setScore] = useState(0);
   const [dinoPosition, setDinoPosition] = useState(0);
+  const [isMovingRight, setIsMovingRight] = useState(false);
   const moveSpeed = 0.5; // Reduced speed for smoother movement
   
   // Generate obstacles at section boundaries
@@ -45,15 +46,11 @@ const GameWorld: React.FC<GameWorldProps> = ({
     setDinoPosition(scrollProgress * 100);
   }, [scrollProgress]);
 
-  // Handle right arrow key movement
+  // Handle right arrow key movement with continuous motion
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
-        setDinoPosition(prev => {
-          // Calculate next position with speed limit
-          const nextPos = Math.min(prev + moveSpeed, 100);
-          return nextPos;
-        });
+        setIsMovingRight(true);
       }
       
       // Add jump ability when moving
@@ -63,7 +60,9 @@ const GameWorld: React.FC<GameWorldProps> = ({
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      // Add any key up handling if needed
+      if (e.key === 'ArrowRight') {
+        setIsMovingRight(false);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -73,7 +72,22 @@ const GameWorld: React.FC<GameWorldProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isJumping, moveSpeed, onJump]);
+  }, [isJumping, onJump]);
+
+  // Continuous movement when right arrow is pressed
+  useEffect(() => {
+    if (!isMovingRight) return;
+    
+    const moveInterval = setInterval(() => {
+      setDinoPosition(prev => {
+        // Calculate next position with speed limit
+        const nextPos = Math.min(prev + moveSpeed, 100);
+        return nextPos;
+      });
+    }, 16); // ~60fps
+    
+    return () => clearInterval(moveInterval);
+  }, [isMovingRight, moveSpeed]);
 
   // Collision detection with reduced collision area
   useEffect(() => {

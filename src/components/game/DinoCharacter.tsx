@@ -29,20 +29,23 @@ const DinoCharacter: React.FC<DinoCharacterProps> = ({ position, isJumping, onJu
     <div
       className={`absolute bottom-0 h-16 w-16 transition-transform cursor-pointer
         ${isJumping ? 'animate-dino-jump' : ''}`}
-      style={{ left: `${position}%` }}
+      style={{ 
+        left: `${position}%`,
+        transform: isJumping ? 'translateY(-40px)' : 'translateY(0)'
+      }}
       onClick={() => !isJumping && onJump()}
     >
       <div className="relative w-full h-full">
         {/* Main dino body */}
-        <div className="absolute bottom-0 w-12 h-12 bg-black rounded-t-md"></div>
-        <div className="absolute bottom-0 left-6 w-8 h-8 bg-black"></div>
+        <div className="absolute bottom-0 w-12 h-12 bg-black dark:bg-white rounded-t-md"></div>
+        <div className="absolute bottom-0 left-6 w-8 h-8 bg-black dark:bg-white"></div>
         
         {/* Legs with animation */}
-        <div className={`absolute bottom-0 w-2 h-4 bg-black left-2 ${legClass} origin-top`}></div>
-        <div className={`absolute bottom-0 w-2 h-4 bg-black left-8 ${!isJumping ? "animate-[leg-move_0.2s_alternate-reverse_infinite]" : ""} origin-top`}></div>
+        <div className={`absolute bottom-0 w-2 h-4 bg-black dark:bg-white left-2 ${legClass} origin-top`}></div>
+        <div className={`absolute bottom-0 w-2 h-4 bg-black dark:bg-white left-8 ${!isJumping ? "animate-[leg-move_0.2s_alternate-reverse_infinite]" : ""} origin-top`}></div>
         
         {/* Eye */}
-        <div className="absolute left-9 top-3 w-1.5 h-1.5 bg-white rounded-full"></div>
+        <div className="absolute left-9 top-3 w-1.5 h-1.5 bg-white dark:bg-black rounded-full"></div>
       </div>
     </div>
   );
