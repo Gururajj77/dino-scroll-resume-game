@@ -1,3 +1,4 @@
+@import '@fontsource/jetbrains-mono';
 
 @tailwind base;
 @tailwind components;
@@ -98,6 +99,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'JetBrains Mono', monospace;
   }
 
   /* Custom scrollbar styling */
@@ -130,4 +132,22 @@
   width: 50px;
   height: 50px;
   transform: translateX(0);
+}
+
+@layer utilities {
+  .clip-path-circle {
+    clip-path: circle(50% at 50% 50%);
+  }
+
+  .clip-path-triangle {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+
+  .clip-path-diamond {
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+
+  .clip-path-hexagon {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
 }

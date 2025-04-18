@@ -1,5 +1,6 @@
-
 import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { Switch } from "@/components/ui/switch";
+import { useTheme } from "next-themes";
 import AboutSection from './portfolio/AboutSection';
 import SkillsSection from './portfolio/SkillsSection';
 import ProjectsSection from './portfolio/ProjectsSection';
@@ -18,8 +19,8 @@ const Portfolio: React.FC = () => {
   const [gameOver, setGameOver] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
   const [isJumping, setIsJumping] = useState(false);
-  
-  // Handle scroll events to update progress
+  const { setTheme, theme } = useTheme();
+
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef.current) {
@@ -29,7 +30,6 @@ const Portfolio: React.FC = () => {
         
         setScrollProgress(progress);
         
-        // Determine current section based on scroll position
         const sectionIndex = Math.min(
           Math.floor(progress * totalSections),
           totalSections - 1
@@ -42,7 +42,6 @@ const Portfolio: React.FC = () => {
     if (container) {
       container.addEventListener('scroll', handleScroll);
       
-      // Initial calculation
       handleScroll();
       
       return () => {
@@ -51,16 +50,13 @@ const Portfolio: React.FC = () => {
     }
   }, []);
   
-  // Handle collision in game
   const handleCollision = () => {
     setGameOver(true);
     
-    // Reset game after a delay
     setTimeout(() => {
       setGameOver(false);
     }, 1500);
     
-    // Could also scroll back to previous section
     if (containerRef.current && currentSection > 0) {
       const sectionWidth = containerRef.current.scrollWidth / totalSections;
       const targetScroll = (currentSection - 1) * sectionWidth;
@@ -72,7 +68,6 @@ const Portfolio: React.FC = () => {
     }
   };
   
-  // Navigate to a specific section
   const navigateToSection = (sectionIndex: number) => {
     if (containerRef.current) {
       const sectionWidth = containerRef.current.scrollWidth / totalSections;
@@ -85,36 +80,44 @@ const Portfolio: React.FC = () => {
     }
   };
 
-  // Handle jumping
   const handleJump = useCallback(() => {
     if (!isJumping) {
       setIsJumping(true);
       setTimeout(() => {
         setIsJumping(false);
-      }, 500); // Match this with the animation duration in tailwind config
+      }, 500);
     }
   }, [isJumping]);
   
-  // Reset game state
   const resetGame = () => {
     setGameOver(false);
   };
   
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
   return (
     <div className="h-screen w-full flex flex-col">
-      {/* Instructions overlay */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <span className="text-sm">🌞</span>
+        <Switch 
+          checked={theme === "dark"}
+          onCheckedChange={toggleTheme}
+        />
+        <span className="text-sm">🌚</span>
+      </div>
+      
       {showInstructions && (
         <InstructionOverlay onClose={() => setShowInstructions(false)} />
       )}
       
-      {/* Game over overlay */}
       {gameOver && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 pointer-events-none">
           <h2 className="text-white text-5xl font-bold">Game Over!</h2>
         </div>
       )}
       
-      {/* Horizontal scrolling container */}
       <div 
         ref={containerRef}
         className="flex-1 overflow-x-auto flex snap-x snap-mandatory scroll-smooth hide-scrollbar"
@@ -127,7 +130,6 @@ const Portfolio: React.FC = () => {
         <ContactSection />
       </div>
       
-      {/* Game component */}
       <GameWorld 
         scrollProgress={scrollProgress}
         currentSection={currentSection}
@@ -137,15 +139,12 @@ const Portfolio: React.FC = () => {
         onJump={handleJump}
       />
       
-      {/* Section indicators */}
       <SectionIndicator
         totalSections={totalSections}
         currentSection={currentSection}
         onSectionClick={navigateToSection}
       />
       
-      {/* Navigation help */}
-      {/* Game controls */}
       <GameControls
         onReset={resetGame}
         onJump={handleJump}
