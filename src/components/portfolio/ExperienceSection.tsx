@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 
 interface ExperienceItem {
   company: string;
@@ -18,35 +17,27 @@ interface EducationItem {
 const ExperienceSection: React.FC = () => {
   const experiences: ExperienceItem[] = [
     {
-      company: "Tech Innovations Inc.",
-      position: "Senior Frontend Developer",
-      period: "2022 - Present",
+      company: "IBM India Pvt. Ltd.",
+      position: "Frontend Developer, Carbon Design System",
+      period: "February 2024 - Present",
       description: [
-        "Led development of company's flagship web application using React and TypeScript",
-        "Implemented CI/CD pipelines reducing deployment time by 40%",
-        "Mentored junior developers and conducted code reviews"
-      ]
+        "Implemented Codecov in monorepo achieving 85% coverage for @carbon/react library",
+        "Shipped optimized UI components with 3,400+ implementations in 2 months",
+        "Led TypeScript migration with 80% downstream adoption and improved type safety",
+        "Grew @carbon/react community from 15 to 50+ developers with 3% faster adoption",
+        "Provided technical support to 5000+ developers through Slack engagement",
+      ],
     },
     {
-      company: "Digital Solutions Co.",
-      position: "Frontend Developer",
-      period: "2019 - 2022",
+      company: "WIPRO LIMITED - Wells Fargo",
+      position: "Project Engineer, Cloud Migration and Modernization",
+      period: "September 2021 - February 2024",
       description: [
-        "Developed responsive UI components for multiple client projects",
-        "Optimized application performance improving load time by 60%",
-        "Collaborated with design team to implement pixel-perfect interfaces"
-      ]
+        "Modernized 5 enterprise apps from WebForms to Angular 14-16 with reusable component library",
+        "Built responsive Angular applications with 100% test coverage using Jasmine/Karma",
+        "Optimized CI/CD pipelines and implemented secure API integrations",
+      ],
     },
-    {
-      company: "StartupXYZ",
-      position: "Web Developer Intern",
-      period: "2018 - 2019",
-      description: [
-        "Assisted in developing company website and internal tools",
-        "Created interactive data visualization dashboards",
-        "Participated in agile development process"
-      ]
-    }
   ];
 
   const education: EducationItem[] = [
@@ -54,21 +45,25 @@ const ExperienceSection: React.FC = () => {
       institution: "Tech University",
       degree: "B.S. Computer Science",
       period: "2015 - 2019",
-      details: "Focus on Web Technologies and Human-Computer Interaction"
+      details: "Focus on Web Technologies and Human-Computer Interaction",
     },
     {
       institution: "Online Learning",
       degree: "Various Certifications",
       period: "2019 - Present",
-      details: "Advanced React, AWS Solutions Architect, UX Design Fundamentals"
-    }
+      details:
+        "Advanced React, AWS Solutions Architect, UX Design Fundamentals",
+    },
   ];
 
   return (
-    <section id="experience" className="flex-shrink-0 w-screen h-full flex flex-col items-center justify-center px-10 snap-center">
+    <section
+      id="experience"
+      className="flex-shrink-0 w-screen h-full flex flex-col items-center justify-center my-64  lg:my-32 px-10 snap-center"
+    >
       <div className="max-w-3xl w-full">
         <h2 className="text-4xl font-bold mb-8">Experience</h2>
-        
+
         <div className="mb-10">
           {experiences.map((exp, index) => (
             <div key={index} className="mb-8">
@@ -77,11 +72,15 @@ const ExperienceSection: React.FC = () => {
                   <h3 className="text-xl font-bold">{exp.position}</h3>
                   <h4 className="text-lg">{exp.company}</h4>
                 </div>
-                <span className="text-muted-foreground mt-1 md:mt-0">{exp.period}</span>
+                <span className="text-muted-foreground mt-1 md:mt-0">
+                  {exp.period}
+                </span>
               </div>
               <ul className="list-disc pl-5">
                 {exp.description.map((item, i) => (
-                  <li key={i} className="mb-1">{item}</li>
+                  <li key={i} className="mb-1">
+                    {item}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -97,9 +96,13 @@ const ExperienceSection: React.FC = () => {
                   <h3 className="text-xl font-bold">{edu.degree}</h3>
                   <h4 className="text-lg">{edu.institution}</h4>
                 </div>
-                <span className="text-muted-foreground mt-1 md:mt-0">{edu.period}</span>
+                <span className="text-muted-foreground mt-1 md:mt-0">
+                  {edu.period}
+                </span>
               </div>
-              {edu.details && <p className="text-muted-foreground">{edu.details}</p>}
+              {edu.details && (
+                <p className="text-muted-foreground">{edu.details}</p>
+              )}
             </div>
           ))}
         </div>
