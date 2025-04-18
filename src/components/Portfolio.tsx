@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
@@ -16,29 +15,28 @@ const Portfolio: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
-  const totalSections = 5; // About, Skills, Projects, Experience, Contact
+  const totalSections = 5;
   const [gameOver, setGameOver] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
   const [isJumping, setIsJumping] = useState(false);
   const [dinoPosition, setDinoPosition] = useState(0);
   const { setTheme, theme } = useTheme();
 
-  // Jump handler with continuous forward motion
+  // Jump handler with forward momentum
   const handleJump = useCallback(() => {
     if (!isJumping) {
       setIsJumping(true);
       
-      // Forward momentum during jump - simulate continuous right movement
-      const jumpDuration = 500; // ms
+      // Add forward momentum during jump
+      const jumpDuration = 500;
       const startTime = Date.now();
       const startPosition = dinoPosition;
-      const jumpDistance = 3; // How far to move during jump
+      const jumpDistance = 10;
       
       const moveInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / jumpDuration, 1);
         
-        // Add forward momentum during jump
         setDinoPosition(prev => {
           const nextPos = Math.min(startPosition + (progress * jumpDistance), 100);
           return nextPos;
@@ -55,6 +53,21 @@ const Portfolio: React.FC = () => {
       }, jumpDuration);
     }
   }, [isJumping, dinoPosition]);
+
+  // Handle section changes
+  const handleSectionChange = useCallback((section: number) => {
+    if (containerRef.current) {
+      const sectionWidth = containerRef.current.scrollWidth / totalSections;
+      const targetScroll = section * sectionWidth;
+      
+      containerRef.current.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth'
+      });
+      
+      setCurrentSection(section);
+    }
+  }, [totalSections]);
 
   // Update scroll position based on dino position
   useEffect(() => {
@@ -167,7 +180,6 @@ const Portfolio: React.FC = () => {
       <div 
         ref={containerRef}
         className="flex-1 overflow-x-auto flex snap-x snap-mandatory scroll-smooth hide-scrollbar"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <AboutSection />
         <SkillsSection />
@@ -183,6 +195,7 @@ const Portfolio: React.FC = () => {
         onCollision={handleCollision}
         isJumping={isJumping}
         onJump={handleJump}
+        onSectionChange={handleSectionChange}
       />
       
       <SectionIndicator
@@ -198,7 +211,7 @@ const Portfolio: React.FC = () => {
       />
       
       <button 
-        className="fixed bottom-4 right-4 z-40 p-2 bg-black text-white dark:bg-white dark:text-black opacity-50 hover:opacity-100 transition-opacity rounded-full"
+        className="fixed bottom-4 right-4 z-40 p-2 bg-black dark:bg-white text-white dark:text-black opacity-50 hover:opacity-100 transition-opacity rounded-full"
         onClick={() => setShowInstructions(true)}
       >
         ?

@@ -10,12 +10,7 @@ interface GameWorldProps {
   onCollision: () => void;
   isJumping: boolean;
   onJump: () => void;
-}
-
-interface ObstacleData {
-  id: number;
-  position: number;
-  size: { width: number; height: number };
+  onSectionChange: (section: number) => void;
 }
 
 const GameWorld: React.FC<GameWorldProps> = ({ 
@@ -24,36 +19,39 @@ const GameWorld: React.FC<GameWorldProps> = ({
   totalSections,
   onCollision,
   isJumping,
-  onJump
+  onJump,
+  onSectionChange
 }) => {
   const [score, setScore] = useState(0);
   const [dinoPosition, setDinoPosition] = useState(0);
   const [isMovingRight, setIsMovingRight] = useState(false);
-  const moveSpeed = 0.5; // Reduced speed for smoother movement
+  const [isMovingLeft, setIsMovingLeft] = useState(false);
+  const moveSpeed = 0.5;
   
   // Generate obstacles at section boundaries
-  const obstacles: ObstacleData[] = [];
-  for (let i = 1; i < totalSections; i++) {
-    obstacles.push({
-      id: i,
-      position: (i / totalSections) * 100,
-      size: { width: 20, height: 30 + (i * 5) }
-    });
-  }
+  const obstacles = Array.from({ length: totalSections - 1 }, (_, i) => ({
+    id: i + 1,
+    position: ((i + 1) / totalSections) * 100,
+    size: { width: 20, height: 30 + (i * 5) }
+  }));
 
   // Sync dino position with scroll progress
   useEffect(() => {
-    setDinoPosition(scrollProgress * 100);
-  }, [scrollProgress]);
+    const section = Math.floor((dinoPosition / 100) * totalSections);
+    if (section !== currentSection) {
+      onSectionChange(section);
+    }
+  }, [dinoPosition, currentSection, totalSections, onSectionChange]);
 
-  // Handle right arrow key movement with continuous motion
+  // Handle keyboard movement
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
         setIsMovingRight(true);
+      } else if (e.key === 'ArrowLeft') {
+        setIsMovingLeft(true);
       }
       
-      // Add jump ability when moving
       if ((e.key === 'ArrowUp' || e.key === ' ') && !isJumping) {
         onJump();
       }
@@ -62,6 +60,8 @@ const GameWorld: React.FC<GameWorldProps> = ({
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
         setIsMovingRight(false);
+      } else if (e.key === 'ArrowLeft') {
+        setIsMovingLeft(false);
       }
     };
 
@@ -74,39 +74,33 @@ const GameWorld: React.FC<GameWorldProps> = ({
     };
   }, [isJumping, onJump]);
 
-  // Continuous movement when right arrow is pressed
+  // Continuous movement
   useEffect(() => {
-    if (!isMovingRight) return;
+    if (!isMovingRight && !isMovingLeft) return;
     
     const moveInterval = setInterval(() => {
       setDinoPosition(prev => {
-        // Calculate next position with speed limit
-        const nextPos = Math.min(prev + moveSpeed, 100);
-        return nextPos;
+        if (isMovingRight) {
+          return Math.min(prev + moveSpeed, 100);
+        }
+        if (isMovingLeft) {
+          return Math.max(prev - moveSpeed, 0);
+        }
+        return prev;
       });
-    }, 16); // ~60fps
+    }, 16);
     
     return () => clearInterval(moveInterval);
-  }, [isMovingRight, moveSpeed]);
+  }, [isMovingRight, isMovingLeft, moveSpeed]);
 
   // Collision detection with reduced collision area
   useEffect(() => {
     obstacles.forEach(obstacle => {
-      // Get all obstacles
-      const obstacleElement = document.querySelector(`[data-collision-width]`);
-      if (!obstacleElement) return;
-
-      // Get collision sizes from data attributes
-      const collisionWidth = parseFloat(obstacleElement.getAttribute('data-collision-width') || '0');
-      const collisionHeight = parseFloat(obstacleElement.getAttribute('data-collision-height') || '0');
-      
-      // More forgiving collision detection
-      const isNearObstacle = Math.abs(dinoPosition - obstacle.position) < (collisionWidth / 200);
+      const isNearObstacle = Math.abs(dinoPosition - obstacle.position) < 3;
       
       if (isNearObstacle && !isJumping) {
         onCollision();
       } else if (isNearObstacle && isJumping) {
-        // Update score when successfully jumping over an obstacle
         if (score < currentSection) {
           setScore(currentSection);
         }

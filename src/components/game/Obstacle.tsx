@@ -8,26 +8,25 @@ interface ObstacleProps {
 }
 
 const Obstacle: React.FC<ObstacleProps> = ({ position, size, id }) => {
-  // Different shapes based on obstacle id
   const getShape = (id: number) => {
     switch (id % 5) {
       case 0:
-        return "clip-path-circle"; // Circle
+        return "clip-path-circle";
       case 1:
-        return "clip-path-triangle"; // Triangle
+        return "clip-path-triangle";
       case 2:
-        return "clip-path-diamond"; // Diamond
+        return "clip-path-diamond";
       case 3:
-        return "clip-path-hexagon"; // Hexagon
+        return "clip-path-hexagon";
       default:
-        return ""; // Square (default)
+        return "";
     }
   };
 
-  // Reduce collision area by 30%
+  // Reduced collision area
   const collisionSize = {
-    width: size.width * 0.7,
-    height: size.height * 0.7
+    width: size.width * 0.6,
+    height: size.height * 0.6
   };
 
   return (
@@ -38,6 +37,7 @@ const Obstacle: React.FC<ObstacleProps> = ({ position, size, id }) => {
         width: `${size.width}px`, 
         height: `${size.height}px`,
       }}
+      data-collision="true"
       data-collision-width={collisionSize.width}
       data-collision-height={collisionSize.height}
     />
