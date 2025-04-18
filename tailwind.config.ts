@@ -19,38 +19,38 @@ export default {
 		},
 		extend: {
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
+				border: '#222222',
+				input: '#222222',
+				ring: '#000000',
+				background: '#FFFFFF',
+				foreground: '#000000',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#000000',
+					foreground: '#FFFFFF'
 				},
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: '#222222',
+					foreground: '#FFFFFF'
 				},
 				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
+					DEFAULT: '#000000',
+					foreground: '#FFFFFF'
 				},
 				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
+					DEFAULT: '#F1F1F1',
+					foreground: '#8A898C'
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					DEFAULT: '#F1F1F1',
+					foreground: '#000000'
 				},
 				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
+					DEFAULT: '#FFFFFF',
+					foreground: '#000000'
 				},
 				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
+					DEFAULT: '#FFFFFF',
+					foreground: '#000000'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -84,11 +84,49 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'dino-run': {
+					'0%': {
+						backgroundPosition: '0px 0px'
+					},
+					'100%': {
+						backgroundPosition: '-176px 0px'
+					}
+				},
+				'dino-jump': {
+					'0%': {
+						transform: 'translateY(0px)'
+					},
+					'50%': {
+						transform: 'translateY(-100px)'
+					},
+					'100%': {
+						transform: 'translateY(0px)'
+					}
+				},
+				'obstacle-move': {
+					'0%': {
+						transform: 'translateX(100vw)'
+					},
+					'100%': {
+						transform: 'translateX(-100%)'
+					}
+				},
+				'leg-move': {
+					'0%': {
+						height: '16px'
+					},
+					'100%': {
+						height: '12px'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'dino-run': 'dino-run 0.5s steps(2) infinite',
+				'dino-jump': 'dino-jump 0.5s ease-in-out',
+				'obstacle-move': 'obstacle-move 2s linear infinite'
 			}
 		}
 	},
