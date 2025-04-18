@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
@@ -19,8 +20,23 @@ const Portfolio: React.FC = () => {
   const [gameOver, setGameOver] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
   const [isJumping, setIsJumping] = useState(false);
+  const [dinoPosition, setDinoPosition] = useState(0);
   const { setTheme, theme } = useTheme();
 
+  // Update scroll position based on dino position
+  useEffect(() => {
+    if (containerRef.current && !gameOver) {
+      const maxScroll = containerRef.current.scrollWidth - containerRef.current.clientWidth;
+      const targetScroll = (dinoPosition / 100) * maxScroll;
+      
+      containerRef.current.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth'
+      });
+    }
+  }, [dinoPosition, gameOver]);
+
+  // Update scroll progress and current section on scroll
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef.current) {
@@ -48,7 +64,7 @@ const Portfolio: React.FC = () => {
         container.removeEventListener('scroll', handleScroll);
       };
     }
-  }, []);
+  }, [totalSections]);
   
   const handleCollision = () => {
     setGameOver(true);
@@ -65,6 +81,9 @@ const Portfolio: React.FC = () => {
         left: targetScroll,
         behavior: 'smooth'
       });
+      
+      // Also update dino position to match
+      setDinoPosition(((currentSection - 1) / totalSections) * 100);
     }
   };
   
@@ -77,6 +96,9 @@ const Portfolio: React.FC = () => {
         left: targetScroll,
         behavior: 'smooth'
       });
+      
+      // Update dino position to match section
+      setDinoPosition((sectionIndex / totalSections) * 100);
     }
   };
 

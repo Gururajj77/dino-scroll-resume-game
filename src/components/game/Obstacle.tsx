@@ -32,14 +32,11 @@ const Obstacle: React.FC<ObstacleProps> = ({ position, size, id }) => {
 
   return (
     <div
-      className={`absolute bottom-0 bg-black ${getShape(id)}`}
+      className={`absolute bottom-0 bg-black dark:bg-white ${getShape(id)}`}
       style={{ 
         left: `${position}%`, 
         width: `${size.width}px`, 
         height: `${size.height}px`,
-        // Add data attributes for collision detection
-        '--collision-width': `${collisionSize.width}px`,
-        '--collision-height': `${collisionSize.height}px`
       }}
       data-collision-width={collisionSize.width}
       data-collision-height={collisionSize.height}

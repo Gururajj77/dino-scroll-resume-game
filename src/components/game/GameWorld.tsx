@@ -28,7 +28,7 @@ const GameWorld: React.FC<GameWorldProps> = ({
 }) => {
   const [score, setScore] = useState(0);
   const [dinoPosition, setDinoPosition] = useState(0);
-  const moveSpeed = 2; // Pixels per frame
+  const moveSpeed = 0.5; // Reduced speed for smoother movement
   
   // Generate obstacles at section boundaries
   const obstacles: ObstacleData[] = [];
@@ -40,32 +40,59 @@ const GameWorld: React.FC<GameWorldProps> = ({
     });
   }
 
+  // Sync dino position with scroll progress
+  useEffect(() => {
+    setDinoPosition(scrollProgress * 100);
+  }, [scrollProgress]);
+
   // Handle right arrow key movement
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
-        setDinoPosition(prev => Math.min(prev + moveSpeed, scrollProgress * 100));
+        setDinoPosition(prev => {
+          // Calculate next position with speed limit
+          const nextPos = Math.min(prev + moveSpeed, 100);
+          return nextPos;
+        });
+      }
+      
+      // Add jump ability when moving
+      if ((e.key === 'ArrowUp' || e.key === ' ') && !isJumping) {
+        onJump();
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [scrollProgress]);
+    const handleKeyUp = (e: KeyboardEvent) => {
+      // Add any key up handling if needed
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [isJumping, moveSpeed, onJump]);
 
   // Collision detection with reduced collision area
   useEffect(() => {
     obstacles.forEach(obstacle => {
+      // Get all obstacles
       const obstacleElement = document.querySelector(`[data-collision-width]`);
       if (!obstacleElement) return;
 
+      // Get collision sizes from data attributes
       const collisionWidth = parseFloat(obstacleElement.getAttribute('data-collision-width') || '0');
       const collisionHeight = parseFloat(obstacleElement.getAttribute('data-collision-height') || '0');
       
-      const isNearObstacle = Math.abs(dinoPosition - obstacle.position) < (collisionWidth / 100);
+      // More forgiving collision detection
+      const isNearObstacle = Math.abs(dinoPosition - obstacle.position) < (collisionWidth / 200);
       
       if (isNearObstacle && !isJumping) {
         onCollision();
       } else if (isNearObstacle && isJumping) {
+        // Update score when successfully jumping over an obstacle
         if (score < currentSection) {
           setScore(currentSection);
         }
